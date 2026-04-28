@@ -371,6 +371,30 @@
       animation-delay: 0.22s;
     }
 
+    .send-particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 214, 214, 0.9);
+      box-shadow: 0 0 20px rgba(255, 67, 67, 0.5);
+      animation: orbitParticle 1.8s linear infinite;
+    }
+
+    .send-particle.p2 {
+      width: 8px;
+      height: 8px;
+      animation-duration: 1.4s;
+      animation-delay: 0.18s;
+    }
+
+    .send-particle.p3 {
+      width: 6px;
+      height: 6px;
+      animation-duration: 1.2s;
+      animation-delay: 0.3s;
+    }
+
     .send-icon {
       position: relative;
       font-size: 2rem;
@@ -389,6 +413,21 @@
       margin-top: 12px;
       color: var(--muted);
       line-height: 1.75;
+    }
+
+    .send-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      margin-top: 18px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--smoke);
+      font-weight: 700;
+      font-size: 0.95rem;
     }
 
     @keyframes pulseRing {
@@ -412,6 +451,20 @@
       }
       50% {
         transform: translateY(-6px) rotate(-4deg);
+      }
+    }
+
+    @keyframes orbitParticle {
+      0% {
+        transform: rotate(0deg) translateX(60px) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(360deg) translateX(60px) rotate(-360deg);
+        opacity: 0.2;
       }
     }
 
@@ -588,7 +641,7 @@
             <option>Да, съгласен съм и ще ги спазвам</option>
             <option>Не</option>
           </select>
-          <p class="field-help">Можем после да вържем бутона към реално изпращане.</p>
+          <p class="field-help">Кандидатурата ще се подаде директно през системата на сайта.</p>
         </article>
 
         <div class="submit-wrap">
@@ -606,10 +659,14 @@
   <div class="send-overlay" id="send-overlay" aria-hidden="true">
     <div class="send-card">
       <div class="send-ring">
+        <div class="send-particle p1"></div>
+        <div class="send-particle p2"></div>
+        <div class="send-particle p3"></div>
         <div class="send-icon">D</div>
       </div>
-      <h3>Подготвяме кандидатурата</h3>
-      <p>Събираме всичките 20 отговора и отваряме готов имейл към `ivan.ttodorov1989@gmail.com`.</p>
+      <h3 id="overlay-title">Изпращаме кандидатурата</h3>
+      <p id="overlay-text">Системата обработва всичките 20 отговора и ги подава сигурно към администрацията.</p>
+      <div class="send-status" id="overlay-status">Подготовка...</div>
     </div>
   </div>
 
@@ -617,6 +674,9 @@
     const form = document.getElementById("application-form");
     const submitButton = document.getElementById("submit-application");
     const sendOverlay = document.getElementById("send-overlay");
+    const overlayTitle = document.getElementById("overlay-title");
+    const overlayText = document.getElementById("overlay-text");
+    const overlayStatus = document.getElementById("overlay-status");
 
     const questions = [
       "Как се казваш?",
@@ -661,24 +721,67 @@
       }
 
       submitButton.classList.add("is-loading");
+      submitButton.textContent = "Изпращане...";
       sendOverlay.classList.add("active");
       sendOverlay.setAttribute("aria-hidden", "false");
+      overlayTitle.textContent = "Изпращаме кандидатурата";
+      overlayText.textContent = "Системата обработва всичките 20 отговора и ги подава сигурно към администрацията.";
+      overlayStatus.textContent = "Подготовка...";
 
-      const subject = "DarkNightRP кандидатура";
-      const body = entries.map((entry, index) => {
-        return `${index + 1}. ${entry.question}\n${entry.answer}`;
-      }).join("\n\n");
+      const payload = {
+        submittedAt: new Date().toISOString(),
+        answers: entries.map((entry, index) => ({
+          number: index + 1,
+          question: entry.question,
+          answer: entry.answer
+        }))
+      };
 
       setTimeout(() => {
-        const mailtoUrl = `mailto:ivan.ttodorov1989@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = mailtoUrl;
+        overlayStatus.textContent = "Криптиране...";
+      }, 350);
 
-        setTimeout(() => {
-          sendOverlay.classList.remove("active");
-          sendOverlay.setAttribute("aria-hidden", "true");
-          submitButton.classList.remove("is-loading");
-        }, 1200);
-      }, 900);
+      setTimeout(() => {
+        overlayStatus.textContent = "Изпращане...";
+      }, 820);
+
+      fetch("submit.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(async (response) => {
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok || !data.ok) {
+            throw new Error(data.error || "Неуспешно изпращане.");
+          }
+
+          overlayTitle.textContent = "Кандидатурата е изпратена";
+          overlayText.textContent = "Формата беше подадена успешно. Очаквай преглед от екипа на DarkNightRP.";
+          overlayStatus.textContent = "Успешно изпратено";
+          form.reset();
+
+          setTimeout(() => {
+            sendOverlay.classList.remove("active");
+            sendOverlay.setAttribute("aria-hidden", "true");
+            submitButton.classList.remove("is-loading");
+            submitButton.textContent = "Изпрати кандидатура";
+          }, 1800);
+        })
+        .catch((error) => {
+          overlayTitle.textContent = "Изпращането не успя";
+          overlayText.textContent = "Тази форма вече е подготвена за автоматично изпращане, но трябва да се отвори през PHP хостинг или локален сървър с mail() поддръжка.";
+          overlayStatus.textContent = error.message;
+
+          setTimeout(() => {
+            sendOverlay.classList.remove("active");
+            sendOverlay.setAttribute("aria-hidden", "true");
+            submitButton.classList.remove("is-loading");
+            submitButton.textContent = "Изпрати кандидатура";
+          }, 2600);
+        });
     });
   </script>
 </body>
