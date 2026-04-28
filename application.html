@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkNightRP | Кандидатура</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060606;
+      --panel: rgba(17, 17, 17, 0.84);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-red: rgba(255, 77, 77, 0.24);
+      --text: #f6f1ea;
+      --muted: #b9aea6;
+      --red: #ff4343;
+      --red-strong: #ff1e1e;
+      --smoke: #d9d2cc;
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 30, 30, 0.16), transparent 24%),
+        radial-gradient(circle at 84% 18%, rgba(255, 67, 67, 0.08), transparent 20%),
+        linear-gradient(180deg, #040404 0%, #0b0b0d 32%, #050505 100%);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 130px 130px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 95%);
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-family: "Orbitron", sans-serif;
+      font-weight: 900;
+      background: linear-gradient(180deg, rgba(255, 67, 67, 0.24), rgba(255, 30, 30, 0.6));
+      border: 1px solid rgba(255, 67, 67, 0.34);
+      box-shadow: 0 0 30px rgba(255, 30, 30, 0.24);
+    }
+
+    .brand strong,
+    .brand p,
+    .hero p,
+    .panel p,
+    label,
+    .field-help,
+    .footer p {
+      margin: 0;
+    }
+
+    .brand p,
+    .hero p,
+    .panel p,
+    label,
+    .field-help,
+    .footer p {
+      color: var(--muted);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .back-link,
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .back-link {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .hero {
+      padding: 36px 0 24px;
+    }
+
+    .hero-card,
+    .panel,
+    .question-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-card {
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      background: linear-gradient(180deg, rgba(18, 18, 18, 0.9), rgba(8, 8, 8, 0.98));
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line-red);
+      background: rgba(255, 67, 67, 0.08);
+      color: #ffd6d6;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, h4 { margin: 0; }
+    h1, h2 { font-family: "Orbitron", sans-serif; }
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      max-width: 72ch;
+      margin-top: 16px;
+      line-height: 1.8;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: 0.42fr 0.58fr;
+      gap: 18px;
+      padding-bottom: 48px;
+    }
+
+    .panel {
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(18, 18, 18, 0.95), rgba(8, 8, 8, 0.98));
+      align-self: start;
+      position: sticky;
+      top: 18px;
+    }
+
+    .panel-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .panel-list div {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--smoke);
+      font-weight: 700;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .question-card {
+      border-radius: 22px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(20, 20, 20, 0.95), rgba(8, 8, 8, 0.98));
+    }
+
+    .question-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .question-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-family: "Orbitron", sans-serif;
+      font-weight: 800;
+      background: linear-gradient(180deg, rgba(255, 67, 67, 0.14), rgba(255, 30, 30, 0.26));
+      border: 1px solid rgba(255, 67, 67, 0.18);
+      color: #fff2f2;
+      flex: 0 0 auto;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(255, 67, 67, 0.38);
+      box-shadow: 0 0 0 4px rgba(255, 67, 67, 0.1);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .field-help {
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    .submit-wrap {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .submit-btn {
+      border: 0;
+      background: linear-gradient(135deg, var(--red), var(--red-strong));
+      color: white;
+      box-shadow: 0 14px 38px rgba(255, 30, 30, 0.28);
+      cursor: pointer;
+    }
+
+    .note-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--smoke);
+      font-weight: 700;
+    }
+
+    .footer {
+      padding: 0 0 42px;
+    }
+
+    @media (max-width: 920px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">DNRP</div>
+        <div>
+          <strong>DarkNightRP</strong>
+          <p>Whitelist Application</p>
+        </div>
+      </div>
+      <a class="back-link" href="index.html">Назад към сайта</a>
+    </div>
+
+    <header class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Application Page / 20 Questions</div>
+        <h1>Кандидатура за DarkNightRP</h1>
+        <p>
+          Това е отделната страница за подаване на кандидатура. Формата е направена в същия dark стил
+          и съдържа 20 въпроса, които могат да се попълнят удобно. В момента бутонът е визуален и не изпраща
+          към backend, но layout-ът е готов за връзване към Discord bot, Google Form или server panel.
+        </p>
+      </div>
+    </header>
+
+    <section class="page-grid">
+      <aside class="panel">
+        <div class="eyebrow">Before You Apply</div>
+        <h3>Какво да знаеш</h3>
+        <p>Отговаряй сериозно, ясно и без troll отговори. Staff екипът гледа както правилните дефиниции, така и начина ти на мислене.</p>
+        <div class="panel-list">
+          <div>Попълни всички 20 въпроса</div>
+          <div>Пиши подробно, когато се иска пример</div>
+          <div>Използвай реален Discord username</div>
+          <div>Прегледай правилата преди изпращане</div>
+        </div>
+      </aside>
+
+      <form>
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">01</div><h4>Как се казваш?</h4></div>
+          <label for="q1">Име / nickname</label>
+          <input id="q1" type="text" placeholder="Напиши твоето име или nickname">
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">02</div><h4>На колко години си?</h4></div>
+          <label for="q2">Възраст</label>
+          <input id="q2" type="number" min="0" placeholder="Напиши възраст">
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">03</div><h4>Какъв е Discord профилът ти?</h4></div>
+          <label for="q3">Discord username / ID</label>
+          <input id="q3" type="text" placeholder="Пример: user1234">
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">04</div><h4>Имаш ли опит във FiveM?</h4></div>
+          <label for="q4">Опит</label>
+          <textarea id="q4" placeholder="Напиши от колко време играеш и какъв опит имаш"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">05</div><h4>В кои сървъри си играл?</h4></div>
+          <label for="q5">Предишни сървъри</label>
+          <textarea id="q5" placeholder="Опиши накратко предишния си опит"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">06</div><h4>Какво означава RDM?</h4></div>
+          <label for="q6">Отговор</label>
+          <textarea id="q6" placeholder="Обясни със свои думи"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">07</div><h4>Какво означава VDM?</h4></div>
+          <label for="q7">Отговор</label>
+          <textarea id="q7" placeholder="Напиши какво представлява"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">08</div><h4>Какво е Metagaming?</h4></div>
+          <label for="q8">Отговор</label>
+          <textarea id="q8" placeholder="Дай кратко и точно обяснение"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">09</div><h4>Какво е Powergaming?</h4></div>
+          <label for="q9">Отговор</label>
+          <textarea id="q9" placeholder="Опиши го с пример или дефиниция"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">10</div><h4>Какво е FearRP?</h4></div>
+          <label for="q10">Отговор</label>
+          <textarea id="q10" placeholder="Обясни как трябва да се прилага"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">11</div><h4>Какво би направил при отвличане?</h4></div>
+          <label for="q11">Ситуация</label>
+          <textarea id="q11" placeholder="Опиши реалистична реакция на персонажа си"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">12</div><h4>Какво правиш при проблем с играч?</h4></div>
+          <label for="q12">Процес</label>
+          <textarea id="q12" placeholder="Опиши правилния OOC процес"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">13</div><h4>Как подаваш репорт?</h4></div>
+          <label for="q13">Репорт</label>
+          <textarea id="q13" placeholder="Напиши какви доказателства трябват"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">14</div><h4>Можеш ли да спориш със staff?</h4></div>
+          <label for="q14">Отговор</label>
+          <textarea id="q14" placeholder="Обясни как се процедира правилно"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">15</div><h4>Какъв персонаж искаш да играеш?</h4></div>
+          <label for="q15">Концепция</label>
+          <textarea id="q15" placeholder="Разкажи накратко концепцията си"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">16</div><h4>Каква е историята на героя ти?</h4></div>
+          <label for="q16">Backstory</label>
+          <textarea id="q16" placeholder="Напиши кратък backstory"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">17</div><h4>Защо искаш в DarkNightRP?</h4></div>
+          <label for="q17">Мотивация</label>
+          <textarea id="q17" placeholder="Опиши какво търсиш в сървъра"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">18</div><h4>Какво очакваш от community-то?</h4></div>
+          <label for="q18">Очаквания</label>
+          <textarea id="q18" placeholder="Напиши каква среда предпочиташ"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">19</div><h4>Колко активен можеш да бъдеш?</h4></div>
+          <label for="q19">Активност</label>
+          <textarea id="q19" placeholder="Посочи ориентировъчно време за игра"></textarea>
+        </article>
+
+        <article class="question-card">
+          <div class="question-top"><div class="question-number">20</div><h4>Съгласен ли си с правилата?</h4></div>
+          <label for="q20">Потвърждение</label>
+          <select id="q20">
+            <option>Да, съгласен съм и ще ги спазвам</option>
+            <option>Не</option>
+          </select>
+          <p class="field-help">Можем после да вържем бутона към реално изпращане.</p>
+        </article>
+
+        <div class="submit-wrap">
+          <button class="submit-btn" type="button">Изпрати кандидатура</button>
+          <a class="note-btn" href="index.html">Назад към началната страница</a>
+        </div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <p>DarkNightRP Application Page</p>
+    </footer>
+  </div>
+</body>
+</html>
