@@ -285,6 +285,11 @@
       cursor: pointer;
     }
 
+    .submit-btn.is-loading {
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
     .note-btn {
       display: inline-flex;
       align-items: center;
@@ -300,6 +305,114 @@
 
     .footer {
       padding: 0 0 42px;
+    }
+
+    .send-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      background: rgba(3, 3, 3, 0.72);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 320ms ease;
+    }
+
+    .send-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .send-card {
+      width: min(520px, calc(100% - 28px));
+      padding: 34px 28px;
+      border-radius: 30px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(18, 18, 18, 0.95), rgba(8, 8, 8, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow);
+      transform: scale(0.92) translateY(18px);
+      transition: transform 360ms ease;
+    }
+
+    .send-overlay.active .send-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .send-ring {
+      position: relative;
+      width: 118px;
+      height: 118px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at center, rgba(255, 67, 67, 0.18), transparent 56%),
+        linear-gradient(180deg, rgba(255, 67, 67, 0.18), rgba(255, 30, 30, 0.32));
+      border: 1px solid rgba(255, 67, 67, 0.24);
+      overflow: hidden;
+    }
+
+    .send-ring::before,
+    .send-ring::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 214, 214, 0.14);
+      animation: pulseRing 1.6s ease-in-out infinite;
+    }
+
+    .send-ring::after {
+      inset: -8px;
+      animation-delay: 0.22s;
+    }
+
+    .send-icon {
+      position: relative;
+      font-size: 2rem;
+      font-weight: 900;
+      font-family: "Orbitron", sans-serif;
+      color: white;
+      animation: rocketLift 1.2s ease-in-out infinite;
+    }
+
+    .send-card h3,
+    .send-card p {
+      margin: 0;
+    }
+
+    .send-card p {
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    @keyframes pulseRing {
+      0% {
+        transform: scale(0.84);
+        opacity: 0.35;
+      }
+      70% {
+        transform: scale(1.12);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes rocketLift {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-6px) rotate(-4deg);
+      }
     }
 
     @media (max-width: 920px) {
@@ -353,7 +466,7 @@
         </div>
       </aside>
 
-      <form>
+      <form id="application-form">
         <article class="question-card">
           <div class="question-top"><div class="question-number">01</div><h4>Как се казваш?</h4></div>
           <label for="q1">Име / nickname</label>
@@ -479,7 +592,7 @@
         </article>
 
         <div class="submit-wrap">
-          <button class="submit-btn" type="button">Изпрати кандидатура</button>
+          <button class="submit-btn" id="submit-application" type="submit">Изпрати кандидатура</button>
           <a class="note-btn" href="index.html">Назад към началната страница</a>
         </div>
       </form>
@@ -489,5 +602,84 @@
       <p>DarkNightRP Application Page</p>
     </footer>
   </div>
+
+  <div class="send-overlay" id="send-overlay" aria-hidden="true">
+    <div class="send-card">
+      <div class="send-ring">
+        <div class="send-icon">D</div>
+      </div>
+      <h3>Подготвяме кандидатурата</h3>
+      <p>Събираме всичките 20 отговора и отваряме готов имейл към `ivan.ttodorov1989@gmail.com`.</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("application-form");
+    const submitButton = document.getElementById("submit-application");
+    const sendOverlay = document.getElementById("send-overlay");
+
+    const questions = [
+      "Как се казваш?",
+      "На колко години си?",
+      "Какъв е Discord профилът ти?",
+      "Имаш ли опит във FiveM?",
+      "В кои сървъри си играл?",
+      "Какво означава RDM?",
+      "Какво означава VDM?",
+      "Какво е Metagaming?",
+      "Какво е Powergaming?",
+      "Какво е FearRP?",
+      "Какво би направил при отвличане?",
+      "Какво правиш при проблем с играч?",
+      "Как подаваш репорт?",
+      "Можеш ли да спориш със staff?",
+      "Какъв персонаж искаш да играеш?",
+      "Каква е историята на героя ти?",
+      "Защо искаш в DarkNightRP?",
+      "Какво очакваш от community-то?",
+      "Колко активен можеш да бъдеш?",
+      "Съгласен ли си с правилата?"
+    ];
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const entries = questions.map((question, index) => {
+        const field = document.getElementById(`q${index + 1}`);
+        return {
+          question,
+          answer: (field?.value || "").trim()
+        };
+      });
+
+      const firstEmpty = entries.findIndex((entry) => !entry.answer);
+      if (firstEmpty !== -1) {
+        const targetField = document.getElementById(`q${firstEmpty + 1}`);
+        targetField?.focus();
+        alert(`Попълни въпрос ${firstEmpty + 1} преди изпращане.`);
+        return;
+      }
+
+      submitButton.classList.add("is-loading");
+      sendOverlay.classList.add("active");
+      sendOverlay.setAttribute("aria-hidden", "false");
+
+      const subject = "DarkNightRP кандидатура";
+      const body = entries.map((entry, index) => {
+        return `${index + 1}. ${entry.question}\n${entry.answer}`;
+      }).join("\n\n");
+
+      setTimeout(() => {
+        const mailtoUrl = `mailto:ivan.ttodorov1989@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoUrl;
+
+        setTimeout(() => {
+          sendOverlay.classList.remove("active");
+          sendOverlay.setAttribute("aria-hidden", "true");
+          submitButton.classList.remove("is-loading");
+        }, 1200);
+      }, 900);
+    });
+  </script>
 </body>
 </html>
